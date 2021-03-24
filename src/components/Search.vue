@@ -4,11 +4,13 @@
     <input v-model="searchTerm" placeholder="Search for Github Users" />
     <button @click="callApi">Submit</button>
     <h2 v-if="totalUsers">{{ totalUsers }} Users</h2>
-    <GithubUserBrief
-      :key="user.id"
-      v-for="user in users.value"
-      :userInfo="user"
-    />
+    <div class="max-w-md mx-auto py-12 px-4 sm:px-0 md:py-16">
+      <ul class="divide-y divide-gray-200">
+        <li :key="user.id" v-for="user in users.value" class="py-4 flex">
+          <GithubUserBrief :userInfo="user" />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
