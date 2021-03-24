@@ -32,14 +32,17 @@
         </li>
       </ul>
     </div>
+    <Pagination v-if="totalUsers" />
   </div>
 </template>
 
 <script>
 import { ref, reactive } from 'vue';
 import GithubUserBrief from './GithubUserBrief.vue';
+import Pagination from './Pagination.vue';
+
 export default {
-  components: { GithubUserBrief },
+  components: { GithubUserBrief, Pagination },
   setup() {
     const url = 'https://api.github.com/search/users?q=';
     const options = {
