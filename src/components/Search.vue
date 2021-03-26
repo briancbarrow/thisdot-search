@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Search</h1>
-    <div class="w-full max-w-xs mx-auto">
+    <form v-on:submit.prevent="callApi" class="w-full max-w-xs mx-auto">
       <label for="searchTerm" class="sr-only">Search Users</label>
       <input
         type="text"
@@ -12,13 +12,12 @@
         placeholder="Brian Barrow"
       />
       <button
-        type="button"
-        @click="callApi"
+        type="submit"
         class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
       >
         Submit
       </button>
-    </div>
+    </form>
     <h2
       class="mt-4 text-lg leading-6 font-medium text-gray-900"
       v-if="totalUsers"
