@@ -23,21 +23,28 @@
       class="mt-4 text-lg leading-6 font-medium text-gray-900"
       v-if="totalUsers"
     >
-      {{ totalUsers }} Users
+      {{ totalUsersString }} Users
     </h2>
-    <div class="max-w-md mx-auto pb-12 px-4 sm:px-0 md:pb-16">
+    <div class="max-w-md mx-auto pb-6 px-4 sm:px-0">
       <ul class="divide-y divide-gray-200">
         <li :key="user.id" v-for="user in users.value" class="py-4 flex">
           <GithubUserBrief :userInfo="user" />
         </li>
       </ul>
     </div>
-    <Pagination v-if="totalUsers" />
+    <Pagination
+      :totalPages="totalPages"
+      :total="totalUsers"
+      :totalString="totalUsersString"
+      :currentPage="currentPage"
+      @custom-previous="goToPrevious()"
+      @custom-next="goToNext()"
+    />
   </div>
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import GithubUserBrief from './GithubUserBrief.vue';
 import Pagination from './Pagination.vue';
 
@@ -47,24 +54,55 @@ export default {
     const url = 'https://api.github.com/search/users?q=';
     const options = {
       method: 'GET',
+      headers: {
+        Authorization: `Bearer ${process.env.VUE_APP_ID}`,
+      },
     };
     const searchTerm = ref('');
     const users = reactive({});
-    const totalUsers = ref(null);
+    const totalUsers = ref(0);
+    const totalUsersString = ref('');
+    const currentPage = ref(1);
+    const totalPages = computed(() => {
+      return Math.ceil(parseInt(totalUsers.value) / 10);
+    });
+    function goToPrevious() {
+      if (currentPage.value === 1) {
+        return;
+      }
+      currentPage.value -= 1;
+      callApi();
+    }
+    function goToNext() {
+      if (currentPage.value === totalPages.value) {
+        return;
+      }
+      currentPage.value += 1;
+      callApi();
+    }
+
     const callApi = async () => {
-      const apiResponse = await fetch(`${url}${searchTerm.value}`, options);
+      const apiResponse = await fetch(
+        `${url}${searchTerm.value}&page=${currentPage.value}&per_page=10`,
+        options
+      );
       const json = await apiResponse.json();
-      console.log('body', json.items);
       users.value = json.items;
       const numberFormat = new Intl.NumberFormat('en-US');
-      totalUsers.value = numberFormat.format(json.total_count);
+      totalUsers.value = json.total_count;
+      totalUsersString.value = numberFormat.format(json.total_count);
     };
 
     return {
       searchTerm,
       callApi,
       totalUsers,
+      totalUsersString,
       users,
+      currentPage,
+      totalPages,
+      goToPrevious,
+      goToNext,
     };
   },
 };

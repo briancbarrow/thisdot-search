@@ -16,16 +16,20 @@
     </div>
     <div class="flex-1 flex justify-between sm:justify-end">
       <button
+        :disabled="currentPage === 1"
         type="button"
         @click="previous"
-        class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        :class="[currentPage === 1 ? 'opacity-50' : '']"
+        class="disabled:opacity-50 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
       >
         Previous
       </button>
       <button
+        :disabled="currentPage >= totalPages"
         type="button"
         @click="next"
-        class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+        :class="[currentPage >= totalPages ? 'opacity-50' : '']"
+        class="disabled:opacity-50 ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
       >
         Next
       </button>
@@ -36,6 +40,10 @@
 <script>
 export default {
   props: {
+    totalPages: {
+      type: Number,
+      required: true,
+    },
     total: {
       type: Number,
       required: true,
@@ -59,10 +67,14 @@ export default {
   },
   computed: {
     rangeStart() {
-      return this.rangeEnd - 9;
+      if (this.total <= 10) {
+        return Math.max(this.rangeEnd - 9, this.total);
+      } else {
+        return this.rangeEnd - 9;
+      }
     },
     rangeEnd() {
-      return 10 * this.currentPage;
+      return Math.min(10 * this.currentPage, this.total);
     },
   },
 };
