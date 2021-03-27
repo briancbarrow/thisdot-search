@@ -2,52 +2,38 @@ import { fireEvent, render, waitFor } from '@testing-library/vue';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import Search from './Search.vue';
+import {
+  userSearch,
+  userInfo,
+  repoSearch,
+  altUserInfo,
+  altRepoSearch,
+} from '../../tests/utils/mockResponses';
 
 const server = setupServer(
   // capture "GET /greeting" requests
   rest.get('https://api.github.com/search/users', (req, res, ctx) => {
-    const query = req.url.searchParams;
-    const q = query.get('q');
-    const page = query.get('page');
-    const per_page = query.get('per_page');
-    console.log('HERE', q, page, per_page);
-    // respond using a mocked JSON body
-    return res(
-      ctx.json({
-        total_count: 4,
-        items: [
-          {
-            login: 'brian',
-            id: 657,
-            avatar_url: 'https://avatars.githubusercontent.com/u/657?v=4',
-            url: 'https://api.github.com/users/brian',
-            repos_url: 'https://api.github.com/users/brian/repos',
-          },
-          {
-            login: 'brianyu28',
-            id: 16066224,
-            avatar_url: 'https://avatars.githubusercontent.com/u/16066224?v=4',
-            url: 'https://api.github.com/users/brianyu28',
-            repos_url: 'https://api.github.com/users/brianyu28/repos',
-          },
-          {
-            login: 'testBrian',
-            id: 16066424,
-            avatar_url: 'https://avatars.githubusercontent.com/u/16066424?v=4',
-            url: 'https://api.github.com/users/testBrian',
-            repos_url: 'https://api.github.com/users/testBrian/repos',
-          },
-          {
-            login: 'brianTest',
-            id: 18966224,
-            avatar_url: 'https://avatars.githubusercontent.com/u/18966224?v=4',
-            url: 'https://api.github.com/users/brianTest',
-            repos_url: 'https://api.github.com/users/brianTest/repos',
-          },
-        ],
-      })
-    );
-  })
+    return res(ctx.json(userSearch));
+  }),
+
+  rest.get('https://api.github.com/users/brianTest', (req, res, ctx) => {
+    return res(ctx.json(userInfo));
+  }),
+
+  rest.get('https://api.github.com/users/brianTesting', (req, res, ctx) => {
+    return res(ctx.json(altUserInfo));
+  }),
+
+  rest.get('https://api.github.com/users/brianTest/repos', (req, res, ctx) => {
+    return res(ctx.json(repoSearch));
+  }),
+
+  rest.get(
+    'https://api.github.com/users/brianTesting/repos',
+    (req, res, ctx) => {
+      return res(ctx.json(altRepoSearch));
+    }
+  )
 );
 
 // establish API mocking before all tests
@@ -63,7 +49,7 @@ test('renders as expecrted', async () => {
   getByTestId('search');
 });
 
-test('renders list of users after search button is clicked', async () => {
+test('renders correct user count after search button is clicked', async () => {
   const { getByTestId, getByPlaceholderText } = render(Search);
   const input = getByPlaceholderText('Brian Barrow');
   await fireEvent.update(input, 'brian');
@@ -71,5 +57,28 @@ test('renders list of users after search button is clicked', async () => {
   await fireEvent.click(button);
   await waitFor(() => getByTestId('numberOfUsers'));
   const userText = getByTestId('numberOfUsers');
-  expect(userText).toHaveTextContent('4 Users');
+  expect(userText).toHaveTextContent('14 Users');
+});
+
+test('renders follower count as expected', async () => {
+  const { getByTestId, getByPlaceholderText } = render(Search);
+  const input = getByPlaceholderText('Brian Barrow');
+  await fireEvent.update(input, 'brian');
+  const button = getByTestId('searchButton');
+  await fireEvent.click(button);
+  await waitFor(() => getByTestId('followerCount-14'));
+  const followerCountText = getByTestId('followerCount-14');
+  expect(followerCountText).toHaveTextContent('Followers: 2,608');
+});
+
+test('renders star count as expected', async () => {
+  const { getByTestId, getByPlaceholderText, getByText } = render(Search);
+  const input = getByPlaceholderText('Brian Barrow');
+  await fireEvent.update(input, 'brian');
+  const button = getByTestId('searchButton');
+  await fireEvent.click(button);
+  await waitFor(() => getByTestId('starCount-14'));
+  const starCountText = getByTestId('starCount-14');
+  await waitFor(() => getByText('Stars: 30'));
+  expect(starCountText).toHaveTextContent('Stars: 30');
 });

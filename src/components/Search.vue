@@ -28,7 +28,12 @@
     </h2>
     <div class="max-w-md mx-auto pb-6 px-4 sm:px-0">
       <ul class="divide-y divide-gray-200">
-        <li :key="user.id" v-for="user in users.value" class="py-4 flex">
+        <li
+          :data-testid="`brief-${user.id}`"
+          :key="user.id"
+          v-for="user in users.value"
+          class="py-4 flex"
+        >
           <GithubUserBrief :userInfo="user" />
         </li>
       </ul>
@@ -83,7 +88,6 @@ export default {
     }
 
     const callApi = async () => {
-      console.log('HERE SEARCH **********************');
       const apiResponse = await fetch(
         `${url}${searchTerm.value}&page=${currentPage.value}&per_page=10`,
         options
