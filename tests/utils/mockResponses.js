@@ -65,12 +65,17 @@ export const userSearch = {
       repos_url: 'https://api.github.com/users/brianTest/repos',
     },
     {
-      login: 'brianTest',
+      login: 'brianTesting',
       id: 10,
       avatar_url: 'https://avatars.githubusercontent.com/u/18966224?v=4',
-      url: 'https://api.github.com/users/brianTest',
-      repos_url: 'https://api.github.com/users/brianTest/repos',
+      url: 'https://api.github.com/users/brianTesting',
+      repos_url: 'https://api.github.com/users/brianTesting/repos',
     },
+  ],
+};
+export const nextUserSearch = {
+  total_count: 14,
+  items: [
     {
       login: 'brianTest',
       id: 11,

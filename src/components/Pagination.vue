@@ -3,12 +3,14 @@
     class="max-w-lg mx-auto bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
     aria-label="Pagination"
   >
-    <div class="hidden sm:block" v-if="total > 0">
+    <div data-testid="paginationText" class="hidden sm:block" v-if="total > 0">
       <p class="text-sm text-gray-700">
         Showing
-        <span class="font-medium">{{ rangeStart }}</span>
+        <span data-testid="rangeStart" class="font-medium">{{
+          rangeStart
+        }}</span>
         to
-        <span class="font-medium">{{ rangeEnd }}</span>
+        <span data-testid="rangeEnd" class="font-medium">{{ rangeEnd }}</span>
         of
         <span class="font-medium">{{ totalString }}</span>
         results
@@ -16,6 +18,7 @@
     </div>
     <div class="flex-1 flex justify-between sm:justify-end">
       <button
+        data-testid="previousButton"
         :disabled="currentPage === 1"
         type="button"
         @click="previous"
@@ -25,6 +28,7 @@
         Previous
       </button>
       <button
+        data-testid="nextButton"
         :disabled="currentPage >= totalPages"
         type="button"
         @click="next"
