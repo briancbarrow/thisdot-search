@@ -12,11 +12,17 @@
       <p class="text-sm text-left text-gray-500">{{ userInfo.login }}</p>
     </div>
     <div id="details" class="ml-3">
-      <p class="text-sm text-left text-gray-500">
+      <p
+        :data-testid="`followerCount-${userInfo.id}`"
+        class="text-sm text-left text-gray-500"
+      >
         Followers:
         {{ followerCount }}
       </p>
-      <p class="text-sm text-left text-gray-500">
+      <p
+        :data-testid="`starCount-${userInfo.id}`"
+        class="text-sm text-left text-gray-500"
+      >
         Stars: {{ formattedStarCount }}
       </p>
     </div>
@@ -56,12 +62,11 @@ export default {
           Authorization: `Bearer ${process.env.VUE_APP_ID}`,
         },
       });
-      repos.json().then((jsonRepos) => {
-        const stars = jsonRepos.reduce((accumulator, repo) => {
-          return repo.stargazers_count + accumulator;
-        }, 0);
-        starCount.value = stars;
-      });
+      const jsonResponse = await repos.json();
+      const stars = jsonResponse.reduce((accumulator, repo) => {
+        return repo.stargazers_count + accumulator;
+      }, 0);
+      starCount.value = stars;
     }
 
     onBeforeMount(async () => {

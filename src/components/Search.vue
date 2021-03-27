@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div data-testid="search">
     <h1>Search</h1>
     <form v-on:submit.prevent="callApi" class="w-full max-w-xs mx-auto">
       <label for="searchTerm" class="sr-only">Search Users</label>
@@ -13,12 +13,14 @@
       />
       <button
         type="submit"
+        data-testid="searchButton"
         class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
       >
         Submit
       </button>
     </form>
     <h2
+      data-testid="numberOfUsers"
       class="mt-4 text-lg leading-6 font-medium text-gray-900"
       v-if="totalUsers"
     >
@@ -26,7 +28,12 @@
     </h2>
     <div class="max-w-md mx-auto pb-6 px-4 sm:px-0">
       <ul class="divide-y divide-gray-200">
-        <li :key="user.id" v-for="user in users.value" class="py-4 flex">
+        <li
+          :data-testid="`brief-${user.id}`"
+          :key="user.id"
+          v-for="user in users.value"
+          class="py-4 flex"
+        >
           <GithubUserBrief :userInfo="user" />
         </li>
       </ul>
