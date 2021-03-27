@@ -69,6 +69,8 @@ export default {
     rangeStart() {
       if (this.total <= 10) {
         return Math.max(this.rangeEnd - 9, this.total);
+      } else if (this.currentPage === this.totalPages) {
+        return (this.currentPage - 1) * 10 + 1;
       } else {
         return this.rangeEnd - 9;
       }
